@@ -1,0 +1,71 @@
+﻿@page "/trainees"
+
+@using Crud_Blazor_WebAssembly.Shared.Models;
+@inject HttpClient Http
+
+<h2>Trainee Information</h2>
+<br />
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <a href="/trainees/add" class="btn btn-primary" role="button">Add Trainee</a>
+    </div>
+</div>
+
+@if (traineeList == null)
+{
+    <p>Loading...........</p>
+}
+else
+{
+    <table class="table table-bordered table-striped align-middle">
+        <thead class="table-success">
+            <tr>
+                <th>Trainee ID</th>
+                <th>Name</th>
+                <th>Contact Address</th>
+                <th>Cell Phone No</th>
+                <th>Email Address</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var trn in traineeList)
+            {
+                <tr>
+                    <td>@trn.Id</td>
+                    <td>@trn.Name</td>
+                    <td>@trn.ContactAddress</td>
+                    <td>@trn.CellPhoneNo</td>
+                    <td>@trn.EmailAddress</td>
+                    <td>
+                        <a href="/trainee/edit/@trn.Id" class="btn btn-outline-secondary" role="button">Edit</a>
+                        <a href="/trainee/delete/@trn.Id" class="btn btn-outline-danger" role="button">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    protected List<Trainee> traineeList = new();
+    protected Trainee trainee = new();
+    protected override async Task OnInitializedAsync()
+    {
+        await GetTrainee();
+    }
+
+    protected async Task GetTrainee()
+    {
+        traineeList = await Http.GetFromJsonAsync<List<Trainee>>("api/Trainee");
+    }
+
+    protected void DeteteConfirm(int id)
+    {
+        trainee = traineeList.FirstOrDefault(t => t.Id == id);
+    }
+
+}
